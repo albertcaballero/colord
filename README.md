@@ -14,6 +14,21 @@ Installing will build the binaries and place them in the the user's `~/bin` dire
 make
 ```
 
+### Dependencies
+
+Ubuntu / Debian:
+```
+sudo apt install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxxf86vm-dev
+```
+Fedora / RHEL / CentOS:
+```
+sudo dnf install libX11-devel libXrandr-devel libXinerama-devel libXcursor-devel libXi-devel libXxf86vm-devel
+```
+Arch / Manjaro:
+```
+sudo pacman -S libx11 libxrandr libxinerama libxcursor libxi libxxf86vm
+```
+
 ## Remove
 
 ```

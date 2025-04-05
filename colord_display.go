@@ -13,6 +13,7 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/go-vgo/robotgo"
 )
 
 func init() {
@@ -69,16 +70,17 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.False) // Keeps the window from being resizable
 
 	glfw.WindowHint(glfw.Resizable, glfw.False)
-	monitor := glfw.GetPrimaryMonitor()
-	mode := monitor.GetVideoMode()
+	// monitor := glfw.GetPrimaryMonitor()
+	// mode := monitor.GetVideoMode()
 
 	window, err := glfw.CreateWindow(windowWidth, windowWidth, "Clipboard Color", nil, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	// Position window in the bottom right corner
-	window.SetPos(mode.Width-windowWidth, mode.Height-windowWidth)
+	// Position window where the mouse is located
+	mouse_x, mouse_y := robotgo.Location()
+	window.SetPos(mouse_x, mouse_y)
 
 	window.MakeContextCurrent()
 	if err := gl.Init(); err != nil {
@@ -106,6 +108,8 @@ func main() {
 	}()
 
 	for !window.ShouldClose() {
+		mouse_x, mouse_y := robotgo.Location()
+		window.SetPos(mouse_x, mouse_y)
 		select {
 		case col := <-showWindowChan:
 			gl.ClearColor(col.r, col.g, col.b, col.a)
