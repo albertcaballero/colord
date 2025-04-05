@@ -14,21 +14,6 @@ Installing will build the binaries and place them in the the user's `~/bin` dire
 make
 ```
 
-### Dependencies
-
-Ubuntu / Debian:
-```
-sudo apt install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxxf86vm-dev
-```
-Fedora / RHEL / CentOS:
-```
-sudo dnf install libX11-devel libXrandr-devel libXinerama-devel libXcursor-devel libXi-devel libXxf86vm-devel
-```
-Arch / Manjaro:
-```
-sudo pacman -S libx11 libxrandr libxinerama libxcursor libxi libxxf86vm
-```
-
 ## Remove
 
 ```
@@ -44,12 +29,12 @@ I use this in [Zed](https://zed.dev) to quickly see the color code. Add the foll
 ```
 {
   "label": "HEX Color Diplay",
-  "command": "colord_display \"$ZED_SELECTED_TEXT\" 1 50",
+  "command": "colord_display \"$ZED_SELECTED_TEXT\" 1 50 false",
   "reveal": "never"
 }
 ```
 
-_colord_display_ arguments: 1 is the number of seconds to display the color, 50 is the window width.
+_colord_display_ arguments: 1 is the number of seconds to display the color, 50 is the window width, false is whether to follow the mouse or appear in the corner (optional, defaults to false).
 
 ~/.config/zed/keymap.json
 

@@ -70,17 +70,30 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.False) // Keeps the window from being resizable
 
 	glfw.WindowHint(glfw.Resizable, glfw.False)
-	// monitor := glfw.GetPrimaryMonitor()
-	// mode := monitor.GetVideoMode()
 
 	window, err := glfw.CreateWindow(windowWidth, windowWidth, "Clipboard Color", nil, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	// Position window where the mouse is located
-	mouse_x, mouse_y := robotgo.Location()
-	window.SetPos(mouse_x, mouse_y)
+	followMouseStr := "false"
+	if len(os.Args) >= 5 {
+		followMouseStr = os.Args[4]
+	}
+	followMouse, err := strconv.ParseBool(followMouseStr)
+	if err != nil {
+		panic(err)
+	}
+	// Position window in the bottom right corner (default)
+	monitor := glfw.GetPrimaryMonitor()
+	mode := monitor.GetVideoMode()
+	winX := mode.Width-windowWidth
+	winY := mode.Height-windowWidth
+	if followMouse {
+		// Position window where the mouse is located
+		winX, winY = robotgo.Location()
+	}
+	window.SetPos(winX, winY)
 
 	window.MakeContextCurrent()
 	if err := gl.Init(); err != nil {
@@ -108,8 +121,10 @@ func main() {
 	}()
 
 	for !window.ShouldClose() {
-		mouse_x, mouse_y := robotgo.Location()
-		window.SetPos(mouse_x, mouse_y)
+		if followMouse {
+			winX, winY = robotgo.Location()
+		}
+		window.SetPos(winX, winY)
 		select {
 		case col := <-showWindowChan:
 			gl.ClearColor(col.r, col.g, col.b, col.a)
