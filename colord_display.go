@@ -1,6 +1,13 @@
 // display.go
 package main
 
+/*
+#cgo linux LDFLAGS: -lX11
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+*/
+import "C"
+
 import (
 	"fmt"
 	"log"
@@ -13,7 +20,6 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/go-vgo/robotgo"
 )
 
 func init() {
@@ -89,9 +95,8 @@ func main() {
 	mode := monitor.GetVideoMode()
 	winX := mode.Width-windowWidth
 	winY := mode.Height-windowWidth
-	if followMouse {
-		// Position window where the mouse is located
-		winX, winY = robotgo.Location()
+	if followMouse && runtime.GOOS=="linux"{
+		winX, winY = GetMousePos()
 	}
 	window.SetPos(winX, winY)
 
@@ -121,8 +126,8 @@ func main() {
 	}()
 
 	for !window.ShouldClose() {
-		if followMouse {
-			winX, winY = robotgo.Location()
+		if followMouse && runtime.GOOS=="linux" {
+			winX, winY = GetMousePos()
 		}
 		window.SetPos(winX, winY)
 		select {
@@ -188,4 +193,21 @@ func hexToRGBA(hexStr string) (color, error) {
 func isValidHexCode(s string) bool {
 	match, _ := regexp.MatchString("^#([A-Fa-f0-9]{3}([A-Fa-f0-9]{1})?|[A-Fa-f0-9]{6}([A-Fa-f0-9]{2})?)$", s)
 	return match
+}
+
+func GetMousePos() (int, int) {
+    disp := C.XOpenDisplay(nil)
+    if disp == nil {
+        panic("Cannot open display")
+    }
+    defer C.XCloseDisplay(disp)
+
+    var root, child C.Window
+    var mouseX, mouseY, winX, winY C.int
+    var mask C.uint
+
+    C.XQueryPointer(disp, C.XDefaultRootWindow(disp), &root, &child,
+        &mouseX, &mouseY, &winX, &winY, &mask)
+
+    return int(mouseX), int(mouseY)
 }
